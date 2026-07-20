@@ -17,6 +17,8 @@ def collect(client: ME5Client) -> None:
         bt = obj.get("basetype") or ""
         if "alert" not in bt:
             continue
+        if first(props, "resolved").lower() in {"yes", "true", "1"}:
+            continue
         severity = first(props, "severity", "level", "priority", default="unknown").lower()
         if severity in {"info", "information"}:
             severity = "informational"

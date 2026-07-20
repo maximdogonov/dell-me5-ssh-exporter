@@ -67,6 +67,8 @@ Controller parsing is validated against ME5 XML output. Disk, pool, volume, and 
 - `dell_me_collector_errors_total{collector="..."}`
 - container logs
 
+Alert metrics count only unresolved alerts. Resolved alert history from `show alerts` is ignored.
+
 ## Prometheus scrape config
 
 ```yaml
