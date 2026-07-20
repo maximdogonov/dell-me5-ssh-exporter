@@ -9,7 +9,9 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY me5_exporter.py entrypoint.sh ./
+COPY collector/ ./collector/
+COPY collectors/ ./collectors/
+COPY config.py me5_exporter.py metrics.py entrypoint.sh ./
 RUN chmod +x /app/entrypoint.sh && chown -R exporter:exporter /app
 
 USER exporter

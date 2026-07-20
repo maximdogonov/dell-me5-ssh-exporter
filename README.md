@@ -2,6 +2,27 @@
 
 The exporter connects to the ME5 CLI over SSH, executes `show ...` commands, parses XML responses, and exposes Prometheus metrics on port 9824.
 
+## Architecture
+
+```text
+collector/
+  ssh.py
+  xml.py
+collectors/
+  alerts.py
+  controllers.py
+  disks.py
+  pools.py
+  ports.py
+  system.py
+  volumes.py
+config.py
+metrics.py
+me5_exporter.py
+```
+
+Each collector runs independently. If one command or parser fails, the exporter logs the exception, marks only that collector as down, and continues with the remaining collectors over the same SSH session.
+
 ## Start
 
 ```bash
@@ -26,6 +47,8 @@ docker volume rm me5_exporter_full_me5-known-hosts
 - `show pools`
 - `show volumes`
 - `show alerts`
+- `show host-ports`
+- `show expander-ports`
 
 Each collector can be disabled with `ENABLE_<NAME>=false`.
 

@@ -5,6 +5,8 @@ services:
     restart: unless-stopped
     ports:
       - "9824:9824"
+    volumes:
+      - me5-known-hosts:/app/.ssh
     env_file:
       - .env
     environment:
@@ -20,6 +22,7 @@ services:
       ENABLE_POOLS: "true"
       ENABLE_VOLUMES: "true"
       ENABLE_ALERTS: "true"
+      ENABLE_PORTS: "true"
 
 volumes:
   me5-known-hosts:
