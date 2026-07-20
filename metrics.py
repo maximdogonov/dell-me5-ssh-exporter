@@ -62,3 +62,6 @@ VOLUME_HEALTH = Gauge("dell_me_volume_health", "Volume health is OK", ["volume"]
 VOLUME_ONLINE = Gauge("dell_me_volume_online", "Volume is online/available", ["volume"])
 VOLUME_SIZE = Gauge("dell_me_volume_size_bytes", "Volume size", ["volume"])
 VOLUME_INFO = Info("dell_me_volume", "Static volume information", ["volume"])
+
+# Versions
+VERSION_INFO = Info("dell_me_version", "Firmware/software version information", ["basetype", "component"])

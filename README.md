@@ -15,6 +15,7 @@ collectors/
   pools.py
   ports.py
   system.py
+  versions.py
   volumes.py
 config.py
 metrics.py
@@ -56,6 +57,7 @@ docker compose up -d --build
 - `show alerts`
 - `show ports`
 - `show sas-link-health`
+- `show versions detail`
 
 Each collector can be disabled with `ENABLE_<NAME>=false`.
 
@@ -152,6 +154,12 @@ Boolean health/status metrics use `1` for OK/true/up and `0` for not OK/false/do
 | `dell_me_volume_online` | gauge | `volume` | Volume is online/available. |
 | `dell_me_volume_size_bytes` | gauge | `volume` | Volume size in bytes. |
 | `dell_me_volume_info` | gauge | `volume`, `serial_number`, `pool`, `raid_type`, `owner`, `type` | Static volume information. |
+
+### Versions
+
+| Metric | Type | Labels | Description |
+| --- | --- | --- | --- |
+| `dell_me_version_info` | gauge | `basetype`, `component`, `version`, `controller`, `model`, `serial_number`, `vendor`, `description` | Firmware/software version information from `show versions detail`; falls back to `show versions` if detail output is unavailable. |
 
 ## Prometheus scrape config
 
