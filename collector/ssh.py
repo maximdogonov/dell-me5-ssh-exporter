@@ -34,7 +34,10 @@ class ME5Client:
             banner_timeout=cfg.banner_timeout,
             auth_timeout=cfg.auth_timeout,
         )
-        self.client.save_host_keys(str(cfg.known_hosts))
+        try:
+            self.client.save_host_keys(str(cfg.known_hosts))
+        except OSError:
+            LOG.warning("Unable to persist SSH host keys to %s", cfg.known_hosts, exc_info=True)
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:

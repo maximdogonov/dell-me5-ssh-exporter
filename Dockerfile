@@ -12,7 +12,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY collector/ ./collector/
 COPY collectors/ ./collectors/
 COPY config.py me5_exporter.py metrics.py entrypoint.sh ./
-RUN chmod +x /app/entrypoint.sh && chown -R exporter:exporter /app
+RUN mkdir -p /app/.ssh \
+    && chmod 700 /app/.ssh \
+    && chmod +x /app/entrypoint.sh \
+    && chown -R exporter:exporter /app
 
 USER exporter
 EXPOSE 9824

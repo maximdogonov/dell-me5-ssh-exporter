@@ -39,6 +39,13 @@ docker compose down
 docker volume rm me5_exporter_full_me5-known-hosts
 ```
 
+If a previous container created the volume with root-owned permissions and the exporter logs `chmod: changing permissions of '/app/.ssh': Operation not permitted`, reset the volume once and rebuild:
+
+```bash
+docker compose down -v
+docker compose up -d --build
+```
+
 ## Implemented collectors
 
 - `show system`
