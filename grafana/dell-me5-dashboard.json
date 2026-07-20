@@ -1685,7 +1685,38 @@
             ]
           }
         ]
-      }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {
+              "disk": true,
+              "type": true,
+              "vendor": true,
+              "model": true,
+              "serial_number": true,
+              "revision": true,
+              "enclosure": true,
+              "Value": true
+            },
+            "indexByName": {
+              "disk": 0,
+              "type": 1,
+              "vendor": 2,
+              "model": 3,
+              "serial_number": 4,
+              "revision": 5,
+              "enclosure": 6,
+              "Value": 7
+            },
+            "renameByName": {
+              "Value": "state"
+            }
+          }
+        }
+      ]
     },
     {
       "id": 22,
@@ -1976,7 +2007,39 @@
             ]
           }
         ]
-      }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {
+              "controller": true,
+              "component": true,
+              "capi_version": true,
+              "cpld_version": true,
+              "bundle_base_version": true,
+              "bundle_status": true,
+              "build_date": true,
+              "ec_fw": true
+            },
+            "indexByName": {
+              "controller": 0,
+              "component": 1,
+              "capi_version": 2,
+              "cpld_version": 3,
+              "bundle_base_version": 4,
+              "bundle_status": 5,
+              "build_date": 6,
+              "ec_fw": 7
+            },
+            "renameByName": {
+              "capi_version": "capi_versions",
+              "cpld_version": "cpid_versions"
+            }
+          }
+        }
+      ]
     }
   ],
   "refresh": "1m",
