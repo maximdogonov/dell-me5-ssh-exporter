@@ -1,0 +1,27 @@
+services:
+  me5-exporter:
+    build: .
+    container_name: me5-exporter
+    restart: unless-stopped
+    ports:
+      - "9824:9824"
+    env_file:
+      - .env
+    environment:
+      EXPORTER_PORT: "9824"
+      SCRAPE_INTERVAL: "60"
+      SSH_CONNECT_TIMEOUT: "30"
+      SSH_BANNER_TIMEOUT: "60"
+      SSH_AUTH_TIMEOUT: "30"
+      SSH_COMMAND_TIMEOUT: "90"
+      ENABLE_SYSTEM: "true"
+      ENABLE_CONTROLLERS: "true"
+      ENABLE_DISKS: "true"
+      ENABLE_POOLS: "true"
+      ENABLE_VOLUMES: "true"
+      ENABLE_ALERTS: "true"
+    volumes:
+      - me5-known-hosts:/app/.ssh
+
+volumes:
+  me5-known-hosts:
