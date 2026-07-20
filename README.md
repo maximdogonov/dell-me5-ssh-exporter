@@ -159,7 +159,7 @@ Boolean health/status metrics use `1` for OK/true/up and `0` for not OK/false/do
 
 | Metric | Type | Labels | Description |
 | --- | --- | --- | --- |
-| `dell_me_version_info` | gauge | `basetype`, `component`, `version`, `controller`, `model`, `serial_number`, `vendor`, `description` | Firmware/software version information from `show versions detail`; falls back to `show versions` if detail output is unavailable. |
+| `dell_me_version_info` | gauge | `basetype`, `component`, `version`, `controller`, `bundle_status`, `bundle_base_version`, `build_date`, `sc_fw`, `sc_baselevel`, `sc_loader`, `sc_asic_version`, `mc_fw`, `mc_base_fw`, `mc_loader`, `mc_os_version`, `capi_version`, `ec_fw`, `cpld_version`, `hardware_version`, `him_version`, `him_model`, `help_version`, `translation_version` | Firmware/software version information from `show versions detail`; falls back to `show versions` if detail output is unavailable. |
 
 ## Prometheus scrape config
 
