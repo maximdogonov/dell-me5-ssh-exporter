@@ -153,6 +153,8 @@ Boolean health/status metrics use `1` for OK/true/up and `0` for not OK/false/do
 | `dell_me_volume_health` | gauge | `volume` | Volume health is OK. |
 | `dell_me_volume_online` | gauge | `volume` | Volume is online/available. |
 | `dell_me_volume_size_bytes` | gauge | `volume` | Volume size in bytes. |
+| `dell_me_volume_allocated_bytes` | gauge | `volume` | Volume allocated capacity in bytes. |
+| `dell_me_volume_used_percent` | gauge | `volume` | Volume allocated capacity percent. |
 | `dell_me_volume_info` | gauge | `volume`, `serial_number`, `pool`, `raid_type`, `owner`, `type` | Static volume information. |
 
 ### Versions

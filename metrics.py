@@ -61,6 +61,8 @@ POOL_USED_PERCENT = Gauge("dell_me_pool_used_percent", "Pool used capacity perce
 VOLUME_HEALTH = Gauge("dell_me_volume_health", "Volume health is OK", ["volume"])
 VOLUME_ONLINE = Gauge("dell_me_volume_online", "Volume is online/available", ["volume"])
 VOLUME_SIZE = Gauge("dell_me_volume_size_bytes", "Volume size", ["volume"])
+VOLUME_ALLOCATED = Gauge("dell_me_volume_allocated_bytes", "Volume allocated capacity", ["volume"])
+VOLUME_USED_PERCENT = Gauge("dell_me_volume_used_percent", "Volume allocated capacity percent", ["volume"])
 VOLUME_INFO = Info("dell_me_volume", "Static volume information", ["volume"])
 
 # Versions
