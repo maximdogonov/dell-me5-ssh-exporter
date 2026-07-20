@@ -169,3 +169,24 @@ scrape_configs:
     static_configs:
       - targets: ['monitoring-host:9824']
 ```
+
+## Grafana dashboard
+
+A ready-to-import Grafana dashboard is available at:
+
+```text
+grafana/dell-me5-dashboard.json
+```
+
+Import it through **Dashboards → New → Import** and select your Prometheus datasource when prompted.
+
+The dashboard includes:
+
+- exporter and collector health
+- unresolved alerts by severity
+- pool capacity and utilization
+- volume sizes
+- controller status
+- host and expansion port state
+- disk health, inventory, and temperature
+- firmware/software versions
