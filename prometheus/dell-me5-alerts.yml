@@ -1,0 +1,227 @@
+groups:
+  - name: dell-me5.rules
+    rules:
+      - alert: DellME5ExporterDown
+        expr: up{job=~"dell.*me5.*|dell_me5_ssh_exporter"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Dell ME5 exporter is down"
+          description: "Prometheus cannot scrape Dell ME5 exporter on {{ $labels.instance }} for more than 2 minutes."
+
+      - alert: DellME5SSHCollectionDown
+        expr: dell_me_exporter_up == 0
+        for: 3m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Dell ME5 SSH collection failed"
+          description: "Exporter is reachable, but SSH collection against the ME5 target is failing on {{ $labels.instance }}."
+
+      - alert: DellME5CollectionStale
+        expr: time() - dell_me_last_success_unixtime > 300
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Dell ME5 metrics are stale"
+          description: "No fully successful Dell ME5 collection cycle for more than 5 minutes on {{ $labels.instance }}."
+
+      - alert: DellME5CollectorFailed
+        expr: dell_me_collector_up == 0
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Dell ME5 collector failed"
+          description: "Collector {{ $labels.collector }} is failing on {{ $labels.instance }}."
+
+      - alert: DellME5SystemUnhealthy
+        expr: dell_me_system_health == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Dell ME5 system health is not OK"
+          description: "System health metric is not OK on {{ $labels.instance }}. Check ME5 health details and active alerts."
+
+      - alert: DellME5ControllerUnhealthy
+        expr: dell_me_controller_health == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Dell ME5 controller health is not OK"
+          description: "Controller {{ $labels.controller }} health is not OK on {{ $labels.instance }}."
+
+      - alert: DellME5ControllerNotOperational
+        expr: dell_me_controller_operational == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Dell ME5 controller is not operational"
+          description: "Controller {{ $labels.controller }} is not Operational on {{ $labels.instance }}."
+
+      - alert: DellME5ControllerNotRedundant
+        expr: dell_me_controller_redundant == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Dell ME5 controller redundancy lost"
+          description: "Controller {{ $labels.controller }} redundancy status is not Redundant on {{ $labels.instance }}."
+
+      - alert: DellME5ControllerFailedOver
+        expr: dell_me_controller_failed_over == 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Dell ME5 controller is failed over"
+          description: "Controller {{ $labels.controller }} is currently failed over on {{ $labels.instance }}."
+
+      - alert: DellME5DiskUnhealthy
+        expr: dell_me_disk_health == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Dell ME5 disk health is not OK"
+          description: "Disk {{ $labels.disk }} in enclosure {{ $labels.enclosure }}, slot {{ $labels.slot }} is unhealthy on {{ $labels.instance }}."
+
+      - alert: DellME5DiskOffline
+        expr: dell_me_disk_online == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Dell ME5 disk is offline"
+          description: "Disk {{ $labels.disk }} in enclosure {{ $labels.enclosure }}, slot {{ $labels.slot }} is offline/unavailable on {{ $labels.instance }}."
+
+      - alert: DellME5DiskTemperatureHigh
+        expr: dell_me_disk_temperature_celsius > 55
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Dell ME5 disk temperature is high"
+          description: "Disk {{ $labels.disk }} temperature is {{ $value }}°C on {{ $labels.instance }}."
+
+      - alert: DellME5DiskLifeLow
+        expr: dell_me_disk_life_remaining_percent > 0 and dell_me_disk_life_remaining_percent < 10
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Dell ME5 SSD life remaining is low"
+          description: "Disk {{ $labels.disk }} has {{ $value }}% life remaining on {{ $labels.instance }}."
+
+      - alert: DellME5PoolUnhealthy
+        expr: dell_me_pool_health == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Dell ME5 pool health is not OK"
+          description: "Pool {{ $labels.pool }} health is not OK on {{ $labels.instance }}."
+
+      - alert: DellME5PoolUsageHigh
+        expr: dell_me_pool_used_percent > 80
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Dell ME5 pool usage is high"
+          description: "Pool {{ $labels.pool }} usage is {{ $value }}% on {{ $labels.instance }}."
+
+      - alert: DellME5PoolUsageCritical
+        expr: dell_me_pool_used_percent > 90
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Dell ME5 pool usage is critical"
+          description: "Pool {{ $labels.pool }} usage is {{ $value }}% on {{ $labels.instance }}."
+
+      - alert: DellME5VolumeUnhealthy
+        expr: dell_me_volume_health == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Dell ME5 volume health is not OK"
+          description: "Volume {{ $labels.volume }} health is not OK on {{ $labels.instance }}."
+
+      - alert: DellME5VolumeOffline
+        expr: dell_me_volume_online == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Dell ME5 volume is offline"
+          description: "Volume {{ $labels.volume }} is offline/unavailable on {{ $labels.instance }}."
+
+      - alert: DellME5VolumeUsageHigh
+        expr: dell_me_volume_used_percent > 80
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Dell ME5 volume allocation is high"
+          description: "Volume {{ $labels.volume }} allocation is {{ $value }}% on {{ $labels.instance }}."
+
+      - alert: DellME5HostPortDown
+        expr: dell_me_host_port_up == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Dell ME5 host port is down"
+          description: "Host port {{ $labels.controller }}/{{ $labels.port }} ({{ $labels.media }}) is down on {{ $labels.instance }}."
+
+      - alert: DellME5HostPortUnhealthy
+        expr: dell_me_host_port_health == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Dell ME5 host port health is not OK"
+          description: "Host port {{ $labels.controller }}/{{ $labels.port }} ({{ $labels.media }}) health is not OK on {{ $labels.instance }}."
+
+      - alert: DellME5ManagementLinkDown
+        expr: dell_me_management_link_up == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Dell ME5 management link is down"
+          description: "Management link for controller {{ $labels.controller }} is down on {{ $labels.instance }}."
+
+      - alert: DellME5ManagementUnhealthy
+        expr: dell_me_management_health == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Dell ME5 management health is not OK"
+          description: "Management interface health for controller {{ $labels.controller }} is not OK on {{ $labels.instance }}."
+
+      - alert: DellME5CriticalAlertsActive
+        expr: dell_me_alerts{severity="critical"} > 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Dell ME5 has critical active alerts"
+          description: "{{ $value }} unresolved critical alert(s) on {{ $labels.instance }}. Check dell_me_alert_info for text details."
+
+      - alert: DellME5WarningAlertsActive
+        expr: dell_me_alerts{severity="warning"} > 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Dell ME5 has warning active alerts"
+          description: "{{ $value }} unresolved warning alert(s) on {{ $labels.instance }}. Check dell_me_alert_info for text details."

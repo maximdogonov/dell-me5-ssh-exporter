@@ -1,0 +1,1570 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: dell-me5-managed
+    folder: Dell ME5
+    interval: 1m
+    rules:
+      - uid: dell-me5-exporter-down
+        title: "Dell ME5 exporter is down"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'up{job=~"dell.*me5.*|dell_me5_ssh_exporter"} == 0'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 2m
+        annotations:
+          summary: "Dell ME5 exporter is down"
+          description: "Prometheus cannot scrape Dell ME5 exporter on {{ $labels.instance }}."
+        labels:
+          severity: critical
+        isPaused: false
+      - uid: dell-me5-ssh-collection-down
+        title: "Dell ME5 SSH collection failed"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_exporter_up == 0'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 3m
+        annotations:
+          summary: "Dell ME5 SSH collection failed"
+          description: "Exporter is reachable, but SSH collection against ME5 is failing on {{ $labels.instance }}."
+        labels:
+          severity: critical
+        isPaused: false
+      - uid: dell-me5-collection-stale
+        title: "Dell ME5 metrics are stale"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'time() - dell_me_last_success_unixtime > 300'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 2m
+        annotations:
+          summary: "Dell ME5 metrics are stale"
+          description: "No fully successful Dell ME5 collection cycle for more than 5 minutes on {{ $labels.instance }}."
+        labels:
+          severity: warning
+        isPaused: false
+      - uid: dell-me5-collector-failed
+        title: "Dell ME5 collector failed"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_collector_up == 0'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 3m
+        annotations:
+          summary: "Dell ME5 collector failed"
+          description: "Collector {{ $labels.collector }} is failing on {{ $labels.instance }}."
+        labels:
+          severity: warning
+        isPaused: false
+      - uid: dell-me5-system-unhealthy
+        title: "Dell ME5 system health is not OK"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_system_health == 0'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "Dell ME5 system health is not OK"
+          description: "System health is not OK on {{ $labels.instance }}."
+        labels:
+          severity: critical
+        isPaused: false
+      - uid: dell-me5-controller-unhealthy
+        title: "Dell ME5 controller health is not OK"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_controller_health == 0'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "Dell ME5 controller health is not OK"
+          description: "Controller {{ $labels.controller }} health is not OK on {{ $labels.instance }}."
+        labels:
+          severity: critical
+        isPaused: false
+      - uid: dell-me5-controller-not-operational
+        title: "Dell ME5 controller is not operational"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_controller_operational == 0'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "Dell ME5 controller is not operational"
+          description: "Controller {{ $labels.controller }} is not Operational on {{ $labels.instance }}."
+        labels:
+          severity: critical
+        isPaused: false
+      - uid: dell-me5-controller-not-redundant
+        title: "Dell ME5 controller redundancy lost"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_controller_redundant == 0'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "Dell ME5 controller redundancy lost"
+          description: "Controller {{ $labels.controller }} redundancy status is not Redundant on {{ $labels.instance }}."
+        labels:
+          severity: warning
+        isPaused: false
+      - uid: dell-me5-disk-unhealthy
+        title: "Dell ME5 disk health is not OK"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_disk_health == 0'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "Dell ME5 disk health is not OK"
+          description: "Disk {{ $labels.disk }} in enclosure {{ $labels.enclosure }}, slot {{ $labels.slot }} is unhealthy on {{ $labels.instance }}."
+        labels:
+          severity: critical
+        isPaused: false
+      - uid: dell-me5-disk-offline
+        title: "Dell ME5 disk is offline"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_disk_online == 0'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "Dell ME5 disk is offline"
+          description: "Disk {{ $labels.disk }} in enclosure {{ $labels.enclosure }}, slot {{ $labels.slot }} is offline on {{ $labels.instance }}."
+        labels:
+          severity: critical
+        isPaused: false
+      - uid: dell-me5-disk-temperature-high
+        title: "Dell ME5 disk temperature is high"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_disk_temperature_celsius > 55'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 10m
+        annotations:
+          summary: "Dell ME5 disk temperature is high"
+          description: "Disk {{ $labels.disk }} temperature is {{ $values.B.Value }}°C on {{ $labels.instance }}."
+        labels:
+          severity: warning
+        isPaused: false
+      - uid: dell-me5-disk-life-low
+        title: "Dell ME5 SSD life remaining is low"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_disk_life_remaining_percent > 0 and dell_me_disk_life_remaining_percent < 10'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 30m
+        annotations:
+          summary: "Dell ME5 SSD life remaining is low"
+          description: "Disk {{ $labels.disk }} has {{ $values.B.Value }}% life remaining on {{ $labels.instance }}."
+        labels:
+          severity: warning
+        isPaused: false
+      - uid: dell-me5-pool-unhealthy
+        title: "Dell ME5 pool health is not OK"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_pool_health == 0'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "Dell ME5 pool health is not OK"
+          description: "Pool {{ $labels.pool }} health is not OK on {{ $labels.instance }}."
+        labels:
+          severity: critical
+        isPaused: false
+      - uid: dell-me5-pool-usage-high
+        title: "Dell ME5 pool usage is high"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_pool_used_percent > 80'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 15m
+        annotations:
+          summary: "Dell ME5 pool usage is high"
+          description: "Pool {{ $labels.pool }} usage is {{ $values.B.Value }}% on {{ $labels.instance }}."
+        labels:
+          severity: warning
+        isPaused: false
+      - uid: dell-me5-pool-usage-critical
+        title: "Dell ME5 pool usage is critical"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_pool_used_percent > 90'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 10m
+        annotations:
+          summary: "Dell ME5 pool usage is critical"
+          description: "Pool {{ $labels.pool }} usage is {{ $values.B.Value }}% on {{ $labels.instance }}."
+        labels:
+          severity: critical
+        isPaused: false
+      - uid: dell-me5-volume-unhealthy
+        title: "Dell ME5 volume health is not OK"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_volume_health == 0'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "Dell ME5 volume health is not OK"
+          description: "Volume {{ $labels.volume }} health is not OK on {{ $labels.instance }}."
+        labels:
+          severity: critical
+        isPaused: false
+      - uid: dell-me5-volume-offline
+        title: "Dell ME5 volume is offline"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_volume_online == 0'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "Dell ME5 volume is offline"
+          description: "Volume {{ $labels.volume }} is offline on {{ $labels.instance }}."
+        labels:
+          severity: critical
+        isPaused: false
+      - uid: dell-me5-volume-usage-high
+        title: "Dell ME5 volume allocation is high"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_volume_used_percent > 80'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 15m
+        annotations:
+          summary: "Dell ME5 volume allocation is high"
+          description: "Volume {{ $labels.volume }} allocation is {{ $values.B.Value }}% on {{ $labels.instance }}."
+        labels:
+          severity: warning
+        isPaused: false
+      - uid: dell-me5-host-port-down
+        title: "Dell ME5 host port is down"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_host_port_up == 0'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "Dell ME5 host port is down"
+          description: "Host port {{ $labels.controller }}/{{ $labels.port }} ({{ $labels.media }}) is down on {{ $labels.instance }}."
+        labels:
+          severity: warning
+        isPaused: false
+      - uid: dell-me5-host-port-unhealthy
+        title: "Dell ME5 host port health is not OK"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_host_port_health == 0'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "Dell ME5 host port health is not OK"
+          description: "Host port {{ $labels.controller }}/{{ $labels.port }} health is not OK on {{ $labels.instance }}."
+        labels:
+          severity: warning
+        isPaused: false
+      - uid: dell-me5-critical-alerts-active
+        title: "Dell ME5 has critical active alerts"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_alerts{severity="critical"} > 0'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 1m
+        annotations:
+          summary: "Dell ME5 has critical active alerts"
+          description: "{{ $values.B.Value }} unresolved critical ME5 alert(s) on {{ $labels.instance }}. Check dell_me_alert_info and dashboard alert details."
+        labels:
+          severity: critical
+        isPaused: false
+      - uid: dell-me5-warning-alerts-active
+        title: "Dell ME5 has warning active alerts"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+            model:
+              datasource:
+                type: prometheus
+                uid: ${GRAFANA_PROMETHEUS_DATASOURCE_UID}
+              editorMode: code
+              expr: 'dell_me_alerts{severity="warning"} > 0'
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              settings:
+                mode: dropNN
+              type: reduce
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: "Dell ME5 has warning active alerts"
+          description: "{{ $values.B.Value }} unresolved warning ME5 alert(s) on {{ $labels.instance }}. Check dell_me_alert_info and dashboard alert details."
+        labels:
+          severity: warning
+        isPaused: false
