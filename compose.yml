@@ -20,8 +20,6 @@ services:
       ENABLE_POOLS: "true"
       ENABLE_VOLUMES: "true"
       ENABLE_ALERTS: "true"
-    volumes:
-      - me5-known-hosts:/app/.ssh
 
 volumes:
   me5-known-hosts:
