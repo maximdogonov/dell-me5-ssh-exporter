@@ -54,8 +54,8 @@ docker compose up -d --build
 - `show pools`
 - `show volumes`
 - `show alerts`
-- `show host-ports`
-- `show expander-ports`
+- `show ports`
+- `show sas-link-health`
 
 Each collector can be disabled with `ENABLE_<NAME>=false`.
 

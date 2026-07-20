@@ -6,6 +6,12 @@ from collector.ssh import ME5Client
 from collector.xml import bytes_from_value, first, number, objects, parse_xml, response_success, state_ok
 from metrics import POOL_FREE, POOL_HEALTH, POOL_SIZE, POOL_USED, POOL_USED_PERCENT
 
+POOL_PAGE_BYTES = 4 * 1024 * 1024
+
+
+def _pages_to_bytes(value: str) -> float:
+    return number(value) * POOL_PAGE_BYTES if value else 0.0
+
 
 def collect(client: ME5Client) -> None:
     root = parse_xml(client.command("show pools"))
@@ -17,8 +23,12 @@ def collect(client: ME5Client) -> None:
             continue
         pool = first(props, "name", "pool", "serial-number", "durable-id", default=f"pool-{count}")
         total = bytes_from_value(first(props, "total-size", "size", "capacity"))
-        free = bytes_from_value(first(props, "free-size", "available-size", "available", "free"))
+        free = bytes_from_value(first(props, "total-avail", "free-size", "available-size", "available", "free"))
         used = bytes_from_value(first(props, "used-size", "allocated-size", "used"))
+        if not used:
+            used = _pages_to_bytes(first(props, "allocated-pages"))
+        if not free:
+            free = _pages_to_bytes(first(props, "available-pages"))
         if total and not used and free:
             used = max(total - free, 0)
         if total and not free and used:

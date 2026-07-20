@@ -90,8 +90,8 @@ def _collect_management_port(props: dict[str, str]) -> bool:
 
 
 def collect(client: ME5Client) -> None:
-    host_count = _collect_response(client, "show host-ports", _collect_host_port)
-    expander_count = _collect_response(client, "show expander-ports", _collect_expander_port)
+    host_count = _collect_response(client, "show ports", _collect_host_port)
+    expander_count = _collect_response(client, "show sas-link-health", _collect_expander_port)
 
     try:
         _collect_response(client, "show network-parameters", _collect_management_port)

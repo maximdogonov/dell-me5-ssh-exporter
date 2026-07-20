@@ -18,6 +18,7 @@ from collector.ssh import ME5Client
 from config import Config, env_bool
 from collectors import alerts, controllers, disks, pools, ports, system, volumes
 from metrics import (
+    ALERTS_BY_SEVERITY,
     COLLECTION_DURATION,
     COLLECTION_ERRORS,
     COLLECTOR_DURATION,
@@ -43,12 +44,25 @@ COLLECTORS: dict[str, tuple[str, Collector]] = {
 }
 
 
+def initialize_metrics() -> None:
+    EXPORTER_UP.set(0)
+    COLLECTION_DURATION.set(0)
+    LAST_SUCCESS.set(0)
+    for name in COLLECTORS:
+        COLLECTOR_UP.labels(name).set(0)
+        COLLECTOR_DURATION.labels(name).set(0)
+        COLLECTOR_ERRORS.labels(name)
+    for severity in ("critical", "error", "warning", "informational", "unknown"):
+        ALERTS_BY_SEVERITY.labels(severity).set(0)
+
+
 def run_cycle(config: Config) -> None:
     started = time.monotonic()
     cycle_ok = True
+    ssh_ok = False
     try:
         with ME5Client(config) as client:
-            EXPORTER_UP.set(1)
+            ssh_ok = True
             for name, (env_name, collector) in COLLECTORS.items():
                 if not env_bool(env_name, True):
                     continue
@@ -64,14 +78,13 @@ def run_cycle(config: Config) -> None:
                 finally:
                     COLLECTOR_DURATION.labels(name).set(time.monotonic() - collector_started)
     except (paramiko.SSHException, socket.error, TimeoutError, OSError):
-        EXPORTER_UP.set(0)
         cycle_ok = False
         LOG.exception("SSH collection failed")
     except Exception:
-        EXPORTER_UP.set(0)
         cycle_ok = False
         LOG.exception("Unexpected collection failure")
     finally:
+        EXPORTER_UP.set(1 if ssh_ok else 0)
         COLLECTION_DURATION.set(time.monotonic() - started)
         if cycle_ok:
             LAST_SUCCESS.set(time.time())
@@ -90,6 +103,7 @@ def main() -> None:
         format="%(asctime)s %(levelname)s %(name)s: %(message)s",
     )
     config = Config.from_env()
+    initialize_metrics()
     signal.signal(signal.SIGTERM, handle_signal)
     signal.signal(signal.SIGINT, handle_signal)
     start_http_server(config.exporter_port)

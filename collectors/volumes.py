@@ -16,13 +16,16 @@ def collect(client: ME5Client) -> None:
         if obj.get("basetype") not in {"volume", "volumes", "virtual-volume", "virtual-volumes"}:
             continue
         volume = first(props, "volume-name", "name", "durable-id", "serial-number", default=f"volume-{count}")
-        VOLUME_HEALTH.labels(volume).set(state_ok(first(props, "health"), ("ok",)))
-        VOLUME_ONLINE.labels(volume).set(state_ok(first(props, "status", "state")))
+        health = first(props, "health")
+        status = first(props, "status", "state", default=health)
+        VOLUME_HEALTH.labels(volume).set(state_ok(health, ("ok",)))
+        VOLUME_ONLINE.labels(volume).set(state_ok(status))
         VOLUME_SIZE.labels(volume).set(bytes_from_value(first(props, "size", "total-size", "capacity")))
         VOLUME_INFO.labels(volume).info({
             "serial_number": first(props, "serial-number"),
             "pool": first(props, "pool", "pool-name", "storage-pool-name"),
-            "raid_type": first(props, "raid-type"),
+            "raid_type": first(props, "raid-type", "raidtype"),
+            "owner": first(props, "owner", "preferred-owner"),
             "type": first(props, "type", "volume-type"),
         })
         count += 1
