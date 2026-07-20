@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable
 
 from collector.ssh import ME5Client
@@ -16,6 +17,8 @@ from metrics import (
     MGMT_HEALTH,
     MGMT_LINK_UP,
 )
+
+LOG = logging.getLogger("me5-exporter")
 
 
 def _controller_from_props(props: dict[str, str]) -> str:
@@ -90,11 +93,17 @@ def _collect_management_port(props: dict[str, str]) -> bool:
 
 
 def collect(client: ME5Client) -> None:
-    host_count = _collect_response(client, "show ports", _collect_host_port)
-    expander_count = _collect_response(client, "show sas-link-health", _collect_expander_port)
+    total_count = 0
 
-    try:
-        _collect_response(client, "show network-parameters", _collect_management_port)
-    except Exception:
-        if host_count == 0 and expander_count == 0:
-            raise
+    for command, parser in (
+        ("show ports", _collect_host_port),
+        ("show sas-link-health", _collect_expander_port),
+        ("show network-parameters", _collect_management_port),
+    ):
+        try:
+            total_count += _collect_response(client, command, parser)
+        except Exception:
+            LOG.warning("Optional ports command failed: %s", command, exc_info=True)
+
+    if total_count == 0:
+        raise ValueError("No port objects recognized in ports XML")
