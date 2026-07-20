@@ -16,7 +16,7 @@ from prometheus_client import start_http_server
 
 from collector.ssh import ME5Client
 from config import Config, env_bool
-from collectors import alerts, controllers, disks, pools, ports, system, versions, volumes
+from collectors import alerts, controllers, disks, events, pools, ports, system, versions, volumes
 from metrics import (
     ALERTS_BY_SEVERITY,
     COLLECTION_DURATION,
@@ -40,6 +40,7 @@ COLLECTORS: dict[str, tuple[str, Collector]] = {
     "pools": ("ENABLE_POOLS", pools.collect),
     "volumes": ("ENABLE_VOLUMES", volumes.collect),
     "alerts": ("ENABLE_ALERTS", alerts.collect),
+    "events": ("ENABLE_EVENTS", events.collect),
     "ports": ("ENABLE_PORTS", ports.collect),
     "versions": ("ENABLE_VERSIONS", versions.collect),
 }

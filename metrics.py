@@ -18,6 +18,8 @@ SYSTEM_HEALTH = Gauge("dell_me_system_health", "System health: 1=OK, 0=not OK or
 SYSTEM_INFO = Info("dell_me_system", "Static ME system information")
 ACTIVE_ALERTS = Gauge("dell_me_active_alerts", "Number of active alerts")
 ALERTS_BY_SEVERITY = Gauge("dell_me_alerts", "Number of active alerts by severity", ["severity"])
+ALERT_INFO = Info("dell_me_alert", "Unresolved alert text information", ["slot"])
+EVENT_INFO = Info("dell_me_event", "Recent event text information", ["rank"])
 
 # Controllers
 CONTROLLER_HEALTH = Gauge("dell_me_controller_health", "Controller health: 1=OK", ["controller"])

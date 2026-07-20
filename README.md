@@ -55,6 +55,7 @@ docker compose up -d --build
 - `show pools`
 - `show volumes`
 - `show alerts`
+- `show events`
 - `show ports`
 - `show sas-link-health`
 - `show versions detail`
@@ -95,6 +96,8 @@ Boolean health/status metrics use `1` for OK/true/up and `0` for not OK/false/do
 | `dell_me_system_info` | gauge | `name`, `model`, `serial_number`, `firmware` | Static system information. |
 | `dell_me_active_alerts` | gauge | - | Number of unresolved alerts. |
 | `dell_me_alerts` | gauge | `severity` | Number of unresolved alerts by severity: `critical`, `error`, `warning`, `informational`, `unknown`. |
+| `dell_me_alert_info` | gauge | `slot`, `id`, `severity`, `component`, `description`, `reason`, `recommended_action`, `detected_time`, `resolved` | Text details for unresolved alerts, limited to 20 alert slots. |
+| `dell_me_event_info` | gauge | `rank`, `id`, `severity`, `component`, `code`, `time`, `message` | Text details for the 20 most recent events from `show events`. |
 
 ### Controllers
 
@@ -185,7 +188,8 @@ Import it through **Dashboards → New → Import** and select your Prometheus d
 The dashboard includes:
 
 - exporter and collector health
-- unresolved alerts by severity
+- unresolved alerts by severity and alert text details
+- recent event text details
 - pool capacity and utilization
 - volume sizes
 - controller status

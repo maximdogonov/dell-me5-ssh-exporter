@@ -22,6 +22,7 @@ services:
       ENABLE_POOLS: "true"
       ENABLE_VOLUMES: "true"
       ENABLE_ALERTS: "true"
+      ENABLE_EVENTS: "true"
       ENABLE_PORTS: "true"
       ENABLE_VERSIONS: "true"
 
