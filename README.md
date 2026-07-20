@@ -69,6 +69,90 @@ Controller parsing is validated against ME5 XML output. Disk, pool, volume, and 
 
 Alert metrics count only unresolved alerts. Resolved alert history from `show alerts` is ignored.
 
+## Metrics
+
+Boolean health/status metrics use `1` for OK/true/up and `0` for not OK/false/down or unknown.
+
+### Exporter
+
+| Metric | Type | Labels | Description |
+| --- | --- | --- | --- |
+| `dell_me_exporter_up` | gauge | - | `1` when the last collection cycle established an SSH connection. |
+| `dell_me_collection_duration_seconds` | gauge | - | Duration of the last full collection cycle. |
+| `dell_me_last_success_unixtime` | gauge | - | Unix timestamp of the last fully successful collection cycle. |
+| `dell_me_collection_errors_total` | counter | - | Number of collection cycles with at least one failed collector or SSH failure. |
+| `dell_me_collector_up` | gauge | `collector` | `1` when the named collector succeeded in the last cycle. |
+| `dell_me_collector_duration_seconds` | gauge | `collector` | Duration of the named collector in the last cycle. |
+| `dell_me_collector_errors_total` | counter | `collector` | Number of failures for the named collector. |
+
+### System and alerts
+
+| Metric | Type | Labels | Description |
+| --- | --- | --- | --- |
+| `dell_me_system_health` | gauge | - | Overall system health. |
+| `dell_me_system_info` | gauge | `name`, `model`, `serial_number`, `firmware` | Static system information. |
+| `dell_me_active_alerts` | gauge | - | Number of unresolved alerts. |
+| `dell_me_alerts` | gauge | `severity` | Number of unresolved alerts by severity: `critical`, `error`, `warning`, `informational`, `unknown`. |
+
+### Controllers
+
+| Metric | Type | Labels | Description |
+| --- | --- | --- | --- |
+| `dell_me_controller_health` | gauge | `controller` | Controller health is OK. |
+| `dell_me_controller_operational` | gauge | `controller` | Controller status is Operational. |
+| `dell_me_controller_failed_over` | gauge | `controller` | Controller is currently failed over. |
+| `dell_me_controller_cache_lock` | gauge | `controller` | Controller cache lock is enabled. |
+| `dell_me_controller_write_back` | gauge | `controller` | Controller write policy is write-back. |
+| `dell_me_controller_memory_bytes` | gauge | `controller` | Controller system memory in bytes. |
+| `dell_me_controller_cache_bytes` | gauge | `controller` | Controller cache memory in bytes. |
+| `dell_me_controller_cpu_mhz` | gauge | `controller` | Controller CPU clock in MHz. |
+| `dell_me_controller_redundant` | gauge | `controller` | Controller redundancy status is Redundant. |
+| `dell_me_controller_info` | gauge | `controller`, `serial_number`, `model`, `firmware`, `hardware_version`, `ip_address`, `position` | Static controller information. |
+
+### Ports
+
+| Metric | Type | Labels | Description |
+| --- | --- | --- | --- |
+| `dell_me_management_link_up` | gauge | `controller` | Management interface link is up. |
+| `dell_me_management_health` | gauge | `controller` | Management interface health is OK. |
+| `dell_me_host_port_up` | gauge | `controller`, `port`, `media` | Host port link is up. |
+| `dell_me_host_port_health` | gauge | `controller`, `port`, `media` | Host port health is OK. |
+| `dell_me_host_port_speed_gbps` | gauge | `controller`, `port`, `media` | Host port negotiated speed in Gbit/s. |
+| `dell_me_expander_port_up` | gauge | `controller`, `port` | Expansion port link is up. |
+| `dell_me_expander_port_health` | gauge | `controller`, `port` | Expansion port health is OK. |
+| `dell_me_expander_port_speed_gbps` | gauge | `controller`, `port` | Expansion port negotiated speed in Gbit/s. |
+
+### Disks
+
+| Metric | Type | Labels | Description |
+| --- | --- | --- | --- |
+| `dell_me_disk_health` | gauge | `disk`, `enclosure`, `slot` | Disk health is OK. |
+| `dell_me_disk_online` | gauge | `disk`, `enclosure`, `slot` | Disk state is online/available. |
+| `dell_me_disk_size_bytes` | gauge | `disk`, `enclosure`, `slot` | Disk raw size in bytes. |
+| `dell_me_disk_temperature_celsius` | gauge | `disk`, `enclosure`, `slot` | Disk temperature in Celsius. |
+| `dell_me_disk_rpm` | gauge | `disk`, `enclosure`, `slot` | Disk rotational speed; `0` for SSDs. |
+| `dell_me_disk_life_remaining_percent` | gauge | `disk`, `enclosure`, `slot` | SSD life remaining percent. |
+| `dell_me_disk_info` | gauge | `disk`, `enclosure`, `slot`, `serial_number`, `vendor`, `model`, `revision`, `type` | Static disk information. |
+
+### Pools
+
+| Metric | Type | Labels | Description |
+| --- | --- | --- | --- |
+| `dell_me_pool_health` | gauge | `pool` | Pool health is OK. |
+| `dell_me_pool_size_bytes` | gauge | `pool` | Pool total capacity in bytes. |
+| `dell_me_pool_used_bytes` | gauge | `pool` | Pool used capacity in bytes. |
+| `dell_me_pool_free_bytes` | gauge | `pool` | Pool free capacity in bytes. |
+| `dell_me_pool_used_percent` | gauge | `pool` | Pool used capacity percent. |
+
+### Volumes
+
+| Metric | Type | Labels | Description |
+| --- | --- | --- | --- |
+| `dell_me_volume_health` | gauge | `volume` | Volume health is OK. |
+| `dell_me_volume_online` | gauge | `volume` | Volume is online/available. |
+| `dell_me_volume_size_bytes` | gauge | `volume` | Volume size in bytes. |
+| `dell_me_volume_info` | gauge | `volume`, `serial_number`, `pool`, `raid_type`, `owner`, `type` | Static volume information. |
+
 ## Prometheus scrape config
 
 ```yaml
