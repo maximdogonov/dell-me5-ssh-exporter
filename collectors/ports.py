@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import logging
+import os
+import time
 from collections.abc import Callable
 
 from collector.ssh import ME5Client
 from collector.xml import first, number, objects, parse_xml, response_success, state_ok
+from config import env_bool
 from metrics import (
     EXPANDER_PORT_HEALTH,
     EXPANDER_PORT_SPEED_GBPS,
@@ -19,6 +22,29 @@ from metrics import (
 )
 
 LOG = logging.getLogger("me5-exporter")
+LAST_OPTIONAL_RUN: dict[str, float] = {}
+
+
+def env_int(name: str, default: int) -> int:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    try:
+        return int(value)
+    except ValueError:
+        LOG.warning("Invalid integer for %s=%r; using %d", name, value, default)
+        return default
+
+
+def _interval_elapsed(name: str, interval: int) -> bool:
+    if interval <= 0:
+        return True
+    now = time.monotonic()
+    last_run = LAST_OPTIONAL_RUN.get(name)
+    if last_run is not None and now - last_run < interval:
+        return False
+    LAST_OPTIONAL_RUN[name] = now
+    return True
 
 
 def _controller_from_props(props: dict[str, str]) -> str:
@@ -95,11 +121,21 @@ def _collect_management_port(props: dict[str, str]) -> bool:
 def collect(client: ME5Client) -> None:
     total_count = 0
 
-    for command, parser in (
+    commands: list[tuple[str, Callable[[dict[str, str]], bool]]] = [
         ("show ports", _collect_host_port),
-        ("show sas-link-health", _collect_expander_port),
-        ("show network-parameters", _collect_management_port),
+    ]
+    if env_bool("ENABLE_EXPANDER_PORTS", True) and _interval_elapsed(
+        "expander_ports",
+        env_int("EXPANDER_PORTS_INTERVAL", 600),
     ):
+        commands.append(("show sas-link-health", _collect_expander_port))
+    if env_bool("ENABLE_MANAGEMENT_PORTS", True) and _interval_elapsed(
+        "management_ports",
+        env_int("MANAGEMENT_PORTS_INTERVAL", 60),
+    ):
+        commands.append(("show network-parameters", _collect_management_port))
+
+    for command, parser in commands:
         try:
             total_count += _collect_response(client, command, parser)
         except Exception:

@@ -24,6 +24,10 @@ services:
       ENABLE_ALERTS: "true"
       ENABLE_EVENTS: "true"
       ENABLE_PORTS: "true"
+      ENABLE_EXPANDER_PORTS: "true"
+      EXPANDER_PORTS_INTERVAL: "600"
+      ENABLE_MANAGEMENT_PORTS: "true"
+      MANAGEMENT_PORTS_INTERVAL: "120"
       ENABLE_VERSIONS: "true"
 
 volumes:

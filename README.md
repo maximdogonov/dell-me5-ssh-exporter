@@ -57,10 +57,18 @@ docker compose up -d --build
 - `show alerts`
 - `show events`
 - `show ports`
-- `show sas-link-health`
+- `show sas-link-health` when `ENABLE_EXPANDER_PORTS=true` and `EXPANDER_PORTS_INTERVAL` has elapsed
+- `show network-parameters` when `ENABLE_MANAGEMENT_PORTS=true` and `MANAGEMENT_PORTS_INTERVAL` has elapsed
 - `show versions detail`
 
 Each collector can be disabled with `ENABLE_<NAME>=false`.
+
+The ports collector always runs `show ports` for host ports. Expansion and management port sub-commands can be controlled separately:
+
+- `ENABLE_EXPANDER_PORTS=false` skips `show sas-link-health`.
+- `EXPANDER_PORTS_INTERVAL=600` runs `show sas-link-health` at most once every 600 seconds and keeps the last exported values between runs. This is useful when no expansion enclosure is connected and the command is slow.
+- `ENABLE_MANAGEMENT_PORTS=false` skips `show network-parameters`.
+- `MANAGEMENT_PORTS_INTERVAL=60` runs `show network-parameters` at most once every 60 seconds.
 
 ## Important
 
@@ -173,6 +181,52 @@ scrape_configs:
   - job_name: dell-me5
     static_configs:
       - targets: ['monitoring-host:9824']
+```
+
+## Prometheus alert rules
+
+Ready-to-use alert rules are available at:
+
+```text
+prometheus/dell-me5-alerts.yml
+```
+
+Example Prometheus configuration:
+
+```yaml
+rule_files:
+  - /etc/prometheus/rules/dell-me5-alerts.yml
+```
+
+The rules cover:
+
+- exporter scrape and SSH collection failures
+- stale collection cycles
+- failed collectors
+- system, controller, disk, pool, volume, host port, and management health
+- high pool and volume allocation
+- unresolved critical and warning ME5 alerts
+
+Review thresholds before production use, especially pool/volume usage and disk temperature.
+
+## Grafana alert rules
+
+Grafana-managed alert provisioning rules are available at:
+
+```text
+grafana/alerting/dell-me5-alerts.yml
+```
+
+The file uses `${GRAFANA_PROMETHEUS_DATASOURCE_UID}` as the Prometheus datasource UID. Set it to your Grafana Prometheus datasource UID before provisioning, for example:
+
+```bash
+export GRAFANA_PROMETHEUS_DATASOURCE_UID=prometheus
+```
+
+For Docker-based Grafana provisioning, mount the file into:
+
+```text
+/etc/grafana/provisioning/alerting/dell-me5-alerts.yml
 ```
 
 ## Grafana dashboard
